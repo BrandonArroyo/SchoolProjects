@@ -1,0 +1,7 @@
+
+GIT_SSL_NO_VERIFY=true git pull https://github.tamu.edu/evanfeier/CSCE_315_Project3_Team1.git genetic-algorithm
+
+
+git add --all
+git commit -m 'msg'
+GIT_SSL_NO_VERIFY=true git push https://github.tamu.edu/evanfeier/CSCE_315_Project3_Team1.git Genetic-Algorithm

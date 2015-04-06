@@ -1,0 +1,5 @@
+
+Pseudo code for BFS
+    - http://www.mathcs.emory.edu/~cheung/Courses/171/Syllabus/11-Graph/bfs.html
+    - http://stackoverflow.com/questions/9333681/java-bitset-example
+    - http://jvalentino.blogspot.com/2007/02/shortcut-to-calculating-power-set-using.html

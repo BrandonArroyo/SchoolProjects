@@ -1,0 +1,33 @@
+        STYLE SHEET
+        
+      
+        
+        // // classes: Uppercase example: Main or MainMain
+        // // function: lowercase example: errorPrint
+        // // variables: underscore example:  x_var
+        
+        //have a blank line between functions and classes
+        
+        for (int i = 0; i < count; ++i) {
+              
+        }   
+        
+        if () {
+        
+        }
+        else {
+        
+        }
+        
+        
+        
+        
+        
+        function1() {
+        
+        }
+        
+        function2() { 
+        
+        }
+      
