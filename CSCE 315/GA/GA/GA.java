@@ -32,7 +32,7 @@ public class GA {
     //triple negation min = 29
     public static void initializePopulation()  {
         Circuit new_circuit;
-        current_generation.clear();
+        //current_generation.clear();
         int circuit_count = 0;
         while (circuit_count < population_size) {
                 if ((new_circuit = Circuit.generateCircuit(number_inputs, solution, 14, 50)) != null) {
@@ -56,8 +56,8 @@ public class GA {
         int n_population_size = 0;
         double avg_fit = 0;
         int avg_index = 0;
-        //returns true if it found a solution
         
+        //if found a desired circuit, return
         int z = 1;
         while (current_generation.get(current_generation.size() - z).getFitnessValue() >= 200 && z < 100) {
             if (current_generation.get(current_generation.size() - z).solution_lines.size() >= solution.size()) {
@@ -65,15 +65,29 @@ public class GA {
             }
             ++z;
         }
-  
-        for (int i = 0; i < current_generation.size() - 1 ; ++i) {
-            if (current_generation.get(i).getFitnessValue() >= (int)average_fitness / 2) {
-                    avg_index = i;
-                    break;
+        //if generations are plateauing, replace the worst half of population with random circuits
+        if (last_average_fitness == average_fitness) {
+            current_generation.subList(0, 50).clear();
+            Circuit new_circuit;
+            int circuit_count = 0;
+            while (circuit_count < 50) {
+                if ((new_circuit = Circuit.generateCircuit(number_inputs, solution, 14, 50)) != null) {
+                    current_generation.add(new_circuit);
+                    ++circuit_count;
+                }
             }
         }
-        current_generation.subList(0, avg_index).clear();
-       
+        else { //remove circuits with fitness value outliers
+            for (int i = 0; i < current_generation.size() - 1 ; ++i) {
+                if (current_generation.get(i).getFitnessValue() >= (int)average_fitness / 2) {
+                        avg_index = i;
+                        break;
+                }
+            }
+            current_generation.subList(0, avg_index).clear();
+        }
+        
+        //       
         n_population_size = current_generation.size();
         for (int i = 0 ; i < n_population_size; ++i) {
                 for(int j = i; j <  n_population_size; ++j)
@@ -285,9 +299,9 @@ public class GA {
         Circuit solution_circuit;
         int i = 0;
         while((solution_circuit = generatePopulation()) == null) {
-            if(average_fitness == last_average_fitness ){
-                initializePopulation();
-            }
+            // if(average_fitness == last_average_fitness ){
+            //     initializePopulation();
+            // }
             System.out.println("generation: " + i); 
             ++i;
         }
