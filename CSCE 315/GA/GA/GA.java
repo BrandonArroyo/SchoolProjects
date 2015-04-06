@@ -35,7 +35,7 @@ public class GA {
         //current_generation.clear();
         int circuit_count = 0;
         while (circuit_count < population_size) {
-                if ((new_circuit = Circuit.generateCircuit(number_inputs, solution, 14, 50)) != null) {
+                if ((new_circuit = Circuit.generateCircuit(number_inputs, solution, 29, 70)) != null) {
                     average_fitness += new_circuit.getFitnessValue();
                     current_generation.add(new_circuit);
                     ++circuit_count;
@@ -59,33 +59,33 @@ public class GA {
         
         //if found a desired circuit, return
         int z = 1;
-        while (current_generation.get(current_generation.size() - z).getFitnessValue() >= 200 && z < 100) {
+        while (current_generation.get(current_generation.size() - z).getFitnessValue() >= 300 && z < 100) {
             if (current_generation.get(current_generation.size() - z).solution_lines.size() >= solution.size()) {
                 return current_generation.get(current_generation.size() - z);
             }
             ++z;
         }
-        //if generations are plateauing, replace the worst half of population with random circuits
+        //if generations are plateauing, replace the population with random circuits
         if (last_average_fitness == average_fitness) {
-            current_generation.subList(0, 50).clear();
+            current_generation.subList(0, 100).clear();
             Circuit new_circuit;
             int circuit_count = 0;
-            while (circuit_count < 50) {
-                if ((new_circuit = Circuit.generateCircuit(number_inputs, solution, 14, 50)) != null) {
+            while (circuit_count < 100) {
+                if ((new_circuit = Circuit.generateCircuit(number_inputs, solution, 29, 70)) != null) {
                     current_generation.add(new_circuit);
                     ++circuit_count;
                 }
             }
         }
-        else { //remove circuits with fitness value outliers
-            for (int i = 0; i < current_generation.size() - 1 ; ++i) {
-                if (current_generation.get(i).getFitnessValue() >= (int)average_fitness / 2) {
-                        avg_index = i;
-                        break;
-                }
+
+        //remove circuits with fitness value outliers
+        for (int i = 0; i < current_generation.size() - 1 ; ++i) {
+            if (current_generation.get(i).getFitnessValue() >= (int)average_fitness / 2) {
+                    avg_index = i;
+                    break;
             }
-            current_generation.subList(0, avg_index).clear();
         }
+        current_generation.subList(0, avg_index).clear();
         
         //       
         n_population_size = current_generation.size();
@@ -110,7 +110,7 @@ public class GA {
         
         while (x < 20) {
             Circuit new_circuit;
-            if ((new_circuit = Circuit.generateCircuit(number_inputs, solution, 14, 50)) != null);
+            if ((new_circuit = Circuit.generateCircuit(number_inputs, solution, 29, 70)) != null);
                      current_generation.add(new_circuit);
         }
         
@@ -216,7 +216,7 @@ public class GA {
         ArrayList<Integer> temp_not_gate_indices = new ArrayList<Integer>(c.not_gate_indices);
         ArrayList<String> solutions = new ArrayList<String>(c.solution_outputs_wanted);
 
-        int depth = randomInt(c.circuit.size() + 1, c.circuit.size() + 16);
+        int depth = randomInt(c.circuit.size() + 1, c.circuit.size() + 50);
         int choice;
         int and_or1;
         int and_or2;
@@ -333,9 +333,9 @@ public class GA {
                 // MAIN FUNCTION 
     public static void main(String[] args)  { 
         ArrayList<String> input_solution  = new ArrayList<String>();
-        input_solution.add("00010111");
-        input_solution.add("01101001");
-        //input_solution.add("10101010");
+        input_solution.add("11110000");
+        input_solution.add("11001100");
+        input_solution.add("10101010");
         geneticAlgorithm(3, 100, input_solution);
     }
     
