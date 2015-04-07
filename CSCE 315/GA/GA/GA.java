@@ -35,7 +35,7 @@ public class GA {
         //current_generation.clear();
         int circuit_count = 0;
         while (circuit_count < population_size) {
-                if ((new_circuit = Circuit.generateCircuit(number_inputs, solution, 29, 70)) != null) {
+                if ((new_circuit = Circuit.generateCircuit(number_inputs, solution, 29, 100)) != null) {
                     average_fitness += new_circuit.getFitnessValue();
                     current_generation.add(new_circuit);
                     ++circuit_count;
@@ -67,11 +67,11 @@ public class GA {
         }
         //if generations are plateauing, replace the population with random circuits
         if (last_average_fitness == average_fitness) {
-            current_generation.subList(0, 100).clear();
+            current_generation.subList(0, 500).clear();
             Circuit new_circuit;
             int circuit_count = 0;
             while (circuit_count < 100) {
-                if ((new_circuit = Circuit.generateCircuit(number_inputs, solution, 29, 70)) != null) {
+                if ((new_circuit = Circuit.generateCircuit(number_inputs, solution, 29, 100)) != null) {
                     current_generation.add(new_circuit);
                     ++circuit_count;
                 }
@@ -101,7 +101,7 @@ public class GA {
         }
         
         int x = 1;
-        while (x < 50) {
+        while (x < 70) {
                 Circuit new_circuit2;
                 if ((new_circuit2 = mutateCircuit(current_generation.get(current_generation.size() - x))) != null)
                     current_generation.add(new_circuit2);
@@ -336,7 +336,7 @@ public class GA {
         input_solution.add("11110000");
         input_solution.add("11001100");
         input_solution.add("10101010");
-        geneticAlgorithm(3, 100, input_solution);
+        geneticAlgorithm(3, 500, input_solution);
     }
     
 }
