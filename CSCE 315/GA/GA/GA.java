@@ -13,6 +13,7 @@ public class GA {
     public static ArrayList<Circuit> current_generation = new ArrayList<Circuit>();
     private static int population_size; // how many circuits in the inital population
     private static double average_fitness = 0; //total average fitness of a generation (should increase each round)
+    private static double last_average_fitness = 0;
     private static int desired_fitness;
     private static int number_inputs;
     private static ArrayList<String> solution;
@@ -29,16 +30,18 @@ public class GA {
     
     //full adder min = 14
     //triple negation min = 29
-    public static void initializePopulation() throws IOException {
+    public static void initializePopulation()  {
         Circuit new_circuit;
+        //current_generation.clear();
         int circuit_count = 0;
         while (circuit_count < population_size) {
-                if ((new_circuit = Circuit.generateCircuit(number_inputs, solution, 14, 50)) != null) {
+                if ((new_circuit = Circuit.generateCircuit(number_inputs, solution, 29, 70)) != null) {
                     average_fitness += new_circuit.getFitnessValue();
                     current_generation.add(new_circuit);
                     ++circuit_count;
                 }
         }
+        Collections.sort(current_generation, new CustomComparator() );
         average_fitness /= population_size;
     }
    
@@ -47,32 +50,35 @@ public class GA {
    //take top 100 (or whatever the polulation size is)\
    //remove all circuits with fitness value twice as big as averagve fitness value
    //to get to the population size, generate random circuits 
-    public static Circuit generatePopulation() throws IOException { // will help with population generation
-        /*
-            use the generate_circuit() function in the Circuit class 
-            to help fill the generations ArrayList 
-        */
+    public static Circuit generatePopulation() { // will help with population generation
         System.out.println("AVERAGE FITNESS VALUE = " + average_fitness);
         
         int n_population_size = 0;
         double avg_fit = 0;
-        int avg_index = 0; //avg index
+        int avg_index = 0;
         
-        // NOTE::  this part is O(n^2) because we need to combine the every combination of the circuits (although) 
-       
-        Collections.sort(current_generation, new CustomComparator() );
-        
-        //returns true if it found a solution
-        
+        //if found a desired circuit, return
         int z = 1;
-        while (current_generation.get(current_generation.size() - z).getFitnessValue() >= 200 && z < 100) {
+        while (current_generation.get(current_generation.size() - z).getFitnessValue() >= 300 && z < 100) {
             if (current_generation.get(current_generation.size() - z).solution_lines.size() >= solution.size()) {
                 return current_generation.get(current_generation.size() - z);
             }
-            
             ++z;
         }
-  
+        //if generations are plateauing, replace the population with random circuits
+        if (last_average_fitness == average_fitness) {
+            current_generation.subList(0, 100).clear();
+            Circuit new_circuit;
+            int circuit_count = 0;
+            while (circuit_count < 100) {
+                if ((new_circuit = Circuit.generateCircuit(number_inputs, solution, 29, 70)) != null) {
+                    current_generation.add(new_circuit);
+                    ++circuit_count;
+                }
+            }
+        }
+
+        //remove circuits with fitness value outliers
         for (int i = 0; i < current_generation.size() - 1 ; ++i) {
             if (current_generation.get(i).getFitnessValue() >= (int)average_fitness / 2) {
                     avg_index = i;
@@ -80,7 +86,8 @@ public class GA {
             }
         }
         current_generation.subList(0, avg_index).clear();
-       
+        
+        //       
         n_population_size = current_generation.size();
         for (int i = 0 ; i < n_population_size; ++i) {
                 for(int j = i; j <  n_population_size; ++j)
@@ -103,7 +110,7 @@ public class GA {
         
         while (x < 20) {
             Circuit new_circuit;
-            if ((new_circuit = Circuit.generateCircuit(number_inputs, solution, 14, 50)) != null);
+            if ((new_circuit = Circuit.generateCircuit(number_inputs, solution, 29, 70)) != null);
                      current_generation.add(new_circuit);
         }
         
@@ -117,12 +124,13 @@ public class GA {
             avg_val += current_generation.get(i).getFitnessValue();
         }
         avg_val /= population_size;
+        last_average_fitness = average_fitness;
         average_fitness = avg_val;
 
         return null;
     }
 
-    public static void combineCircuit(Circuit circuit1, Circuit circuit2) throws IOException {
+    public static void combineCircuit(Circuit circuit1, Circuit circuit2) {
         int circuit1_size = circuit1.circuit.size();
         int circuit2_size = circuit2.circuit.size();
         ArrayList<String> solutions = circuit1.solution_outputs_wanted;
@@ -198,7 +206,7 @@ public class GA {
         }
     }
     
-    public static Circuit mutateCircuit(Circuit c) throws IOException {
+    public static Circuit mutateCircuit(Circuit c) {
         // this will mutate the circuit 
       int number_not_gates = c.getNotGates();
         
@@ -208,7 +216,7 @@ public class GA {
         ArrayList<Integer> temp_not_gate_indices = new ArrayList<Integer>(c.not_gate_indices);
         ArrayList<String> solutions = new ArrayList<String>(c.solution_outputs_wanted);
 
-        int depth = randomInt(c.circuit.size() + 1, c.circuit.size() + 16);
+        int depth = randomInt(c.circuit.size() + 1, c.circuit.size() + 50);
         int choice;
         int and_or1;
         int and_or2;
@@ -282,7 +290,7 @@ public class GA {
     
 //------------------------------------------------------------------------------
                         //THE GENETIC ALGORITHM
-    public static void geneticAlgorithm(int in_number_inputs, int in_population_size, ArrayList<String> in_solution) throws IOException { // the number of inputs allows for the circuit to be defined
+    public static void geneticAlgorithm(int in_number_inputs, int in_population_size, ArrayList<String> in_solution) { // the number of inputs allows for the circuit to be defined
         number_inputs = in_number_inputs;
         population_size = in_population_size;
         solution = in_solution;
@@ -290,7 +298,10 @@ public class GA {
         
         Circuit solution_circuit;
         int i = 0;
-        while((solution_circuit = generatePopulation()) == null) { 
+        while((solution_circuit = generatePopulation()) == null) {
+            // if(average_fitness == last_average_fitness ){
+            //     initializePopulation();
+            // }
             System.out.println("generation: " + i); 
             ++i;
         }
@@ -317,17 +328,14 @@ public class GA {
         public int compare(Circuit o1, Circuit o2) {
             return Double.compare(o1.getFitnessValue(),o2.getFitnessValue());
         }
-        // public int binarySearch(ArrayList<Circuit> a) {
-        //     return binarySearch(a.get(a.size()/2).getFitnessValue());
-        // }
     }
 // //-------------------------------------------------------------------------------
                 // MAIN FUNCTION 
-    public static void main(String[] args) throws IOException { 
+    public static void main(String[] args)  { 
         ArrayList<String> input_solution  = new ArrayList<String>();
-        input_solution.add("00010111");
-        input_solution.add("01101001");
-        //input_solution.add("10101010");
+        input_solution.add("11110000");
+        input_solution.add("11001100");
+        input_solution.add("10101010");
         geneticAlgorithm(3, 100, input_solution);
     }
     

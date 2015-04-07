@@ -47,72 +47,19 @@ public class Circuit {
         return fitness_value;
     }
     
-    
     //fitness fuction should be number of outputs correct(most priority) + number of unique inputs
     public void setFitnessValue() {
         Set<String> unique_outputs = new HashSet<String>(circuit_output);
+        String next_gate = "NONE";
+        int output_index = 0;
+        while (next_gate.equals("NONE")) {
+            next_gate = circuit.get(output_index).substring(2, 6);
+            ++output_index;
+        }
         double solution_goal = solution_outputs_wanted.size();
         double number_solutions_value = solution_lines.size() * 100;
-        double unique_solutions = Math.pow(2, Math.pow(2, 3));
+        double unique_solutions = Math.pow(2, Math.pow(2, output_index - 1));
         fitness_value = number_solutions_value + (unique_outputs.size() * ((solution_goal * 100) / unique_solutions));
-        //System.out.println("solution goal " + solution_goal);
-        //System.out.println("number_solutions_value " + number_solutions_value);
-        //System.out.println("unique_solutions " + unique_solutions);
-    }
-    
-    //used in getPossibleGates() to test an output against the solutions
-    private boolean isSolution(String output) {
-        for (String sol : solution_outputs_wanted) {
-            if (output.equals(sol)) {
-                return true;
-            }
-        }
-        return false;
-    }
-    
-    //if entrys output == any output from this circuit, return true
-    public boolean testEntry(String entry) throws IOException {
-        String test = getOutput(entry);
-        for(int i = 0; i < circuit_output.size(); ++i) {
-            if (test.equals(circuit_output.get(i))) {
-                return true;
-            }
-        }
-        return false;
-    }
-    
-   // gets outputs of line
-    public String getOutput(String entry) throws IOException {
-        StreamTokenizer tokenizer = new StreamTokenizer(new StringReader(entry));
-        tokenizer.nextToken();
-        Double token = tokenizer.nval;
-        int index = token.intValue() - 1;
-        tokenizer.nextToken();
-        String gate = tokenizer.sval;
-        
-        ArrayList<Integer> inputs = new ArrayList<Integer>();
-        String calculation = "-1";
-        while (tokenizer.nextToken() != StreamTokenizer.TT_EOF) {
-            Double temp = tokenizer.nval;
-            inputs.add(temp.intValue() - 1);
-        }
-        int num_of_inputs = inputs.size() - 1;
-        if (gate.equals("AND")) {
-            for(int i = 0; i < num_of_inputs; ++i) {
-                if(i > 0) calculation = AND(calculation, circuit_output.get(inputs.get(i+1)));
-                else calculation = AND(circuit_output.get(inputs.get(i)), circuit_output.get(inputs.get(i+1)));
-            }
-        }
-        else if (gate.equals("OR")) {
-            for(int i = 0; i < num_of_inputs; ++i) {
-                 if (i > 0) calculation = OR(calculation, circuit_output.get(inputs.get(i+1)));
-                 else calculation = OR(circuit_output.get(inputs.get(i)), circuit_output.get(inputs.get(i+1)));
-            }
-        }
-        else if (gate.equals("NOT")) {
-            calculation = NOT(circuit_output.get(inputs.get(0)));
-        }
-        return calculation;
     }
     
     //---------------------------------------------------------------------------------------------
@@ -160,12 +107,6 @@ public class Circuit {
     
     //---------------------------------------------------------------------------------------------
         
-//------------------------------------------------------------------------------------
-/*
-                    Genetic algorithm stuff below here
-
-*/
-
     public static int randomInt(int min, int max) {
          Random rand = new Random();
          int randomNum = rand.nextInt((max - min) + 1) + min;
@@ -173,37 +114,43 @@ public class Circuit {
     }
     
     // gets outputs of line
-    public static String getOutput2(String entry, ArrayList<String> outputs) throws IOException {
-        StreamTokenizer tokenizer = new StreamTokenizer(new StringReader(entry));
-        tokenizer.nextToken();
-        Double token = tokenizer.nval;
-        int index = token.intValue() - 1;
-        tokenizer.nextToken();
-        String gate = tokenizer.sval;
-        
-        ArrayList<Integer> inputs = new ArrayList<Integer>();
-        String calculation = "-1";
-        while (tokenizer.nextToken() != StreamTokenizer.TT_EOF) {
-            Double temp = tokenizer.nval;
-            inputs.add(temp.intValue() - 1);
-        }
-        int num_of_inputs = inputs.size() - 1;
-        if (gate.equals("AND")) {
-            for(int i = 0; i < num_of_inputs; ++i) {
-                if(i > 0) calculation = AND(calculation, outputs.get(inputs.get(i+1)));
-                else calculation = AND(outputs.get(inputs.get(i)), outputs.get(inputs.get(i+1)));
+    public static String getOutput2(String entry, ArrayList<String> outputs) {
+        try {
+            StreamTokenizer tokenizer = new StreamTokenizer(new StringReader(entry));
+            tokenizer.nextToken();
+            Double token = tokenizer.nval;
+            int index = token.intValue() - 1;
+            tokenizer.nextToken();
+            String gate = tokenizer.sval;
+            
+            ArrayList<Integer> inputs = new ArrayList<Integer>();
+            String calculation = "-1";
+            while (tokenizer.nextToken() != StreamTokenizer.TT_EOF) {
+                Double temp = tokenizer.nval;
+                inputs.add(temp.intValue() - 1);
             }
-        }
-        else if (gate.equals("OR")) {
-            for(int i = 0; i < num_of_inputs; ++i) {
-                 if (i > 0) calculation = OR(calculation, outputs.get(inputs.get(i+1)));
-                 else calculation = OR(outputs.get(inputs.get(i)), outputs.get(inputs.get(i+1)));
+            int num_of_inputs = inputs.size() - 1;
+            if (gate.equals("AND")) {
+                for(int i = 0; i < num_of_inputs; ++i) {
+                    if(i > 0) calculation = AND(calculation, outputs.get(inputs.get(i+1)));
+                    else calculation = AND(outputs.get(inputs.get(i)), outputs.get(inputs.get(i+1)));
+                }
             }
+            else if (gate.equals("OR")) {
+                for(int i = 0; i < num_of_inputs; ++i) {
+                     if (i > 0) calculation = OR(calculation, outputs.get(inputs.get(i+1)));
+                     else calculation = OR(outputs.get(inputs.get(i)), outputs.get(inputs.get(i+1)));
+                }
+            }
+            else if (gate.equals("NOT")) {
+                calculation = NOT(outputs.get(inputs.get(0)));
+            }
+            return calculation;
         }
-        else if (gate.equals("NOT")) {
-            calculation = NOT(outputs.get(inputs.get(0)));
+        catch (IOException e) {
+            e.printStackTrace();
         }
-        return calculation;
+        return null;
     }
     
     public static boolean isSolution2(String output, ArrayList<String> solutions) {
@@ -216,11 +163,9 @@ public class Circuit {
     }
 
     //wont work for 1 input
-    public static Circuit generateCircuit(int number_inputs, ArrayList<String> solutions, int min_depth, int max_depth) throws IOException {
+    public static Circuit generateCircuit(int number_inputs, ArrayList<String> solutions, int min_depth, int max_depth) {
 
         int number_not_gates = 0;
-        //int number_and_gates = 0;
-        //int number_or_gates = 0;
         
         ArrayList<String> input_circuit = new ArrayList<String>();
         ArrayList<String> input_circuit_output = new ArrayList<String>();
@@ -251,8 +196,9 @@ public class Circuit {
         int i = number_inputs + 1;
         int j  = number_inputs + 1;
         while (j <= depth * 4) {
+            
             //choose randomly and/not/or
-
+            //and has 1/3 chance, or has 1/3 chance, not has 1/27 chance
             if (number_not_gates == 2)
                 choice = randomInt(1, 2);
             else {
