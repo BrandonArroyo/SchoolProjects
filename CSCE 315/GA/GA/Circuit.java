@@ -205,8 +205,12 @@ public class Circuit {
                 choice = randomInt(1, 3);
                 if (choice == 3) {
                     choice = randomInt(1, 3);
-                        if (choice == 3)
+                        if (choice == 3) {
                             choice = randomInt(1, 3);
+                            if (choice == 3) {
+                                choice = randomInt(1, 3);
+                            }
+                        }
                 }
             }
 
