@@ -1,4 +1,5 @@
 import java.io.*;
+import java.util.*;
 // import java.io.File;
 // import java.io.FileInputStream;
 // import java.io.IOException;
@@ -6,33 +7,51 @@ import java.io.*;
 
 public class SoundEncrypt {
 
-	private byte[] sounds;
+	private static byte[] sounds;
+	private static int length; // should never be altered after constructor to check later after altering file
 	private File wavFile;
-	private InputStream wavConvert;
-	public SoundEncrypt(String path_name){
+	private	InputStream is;
+	public SoundEncrypt(String file_name){
 		try{
-			wavFile = new File(path_name);
-			wavConvert = new FileInputStream(wavFile);
-			sounds = new byte[ (int)wavFile.length()];
-			wavConvert.read(sounds, 0, sounds.length);
-			wavConvert.close();
+			wavFile = new File(file_name);
+			is = new FileInputStream(wavFile);
+			sounds = new byte[(int)wavFile.length()];
+			is.read(sounds,0,sounds.length);
+			is.close();
+			length = (int)wavFile.length();
+			
 		}
-		catch(FileNotFoundException ex){
-			System.out.println("error has occured: File not Found");
+		catch(Exception e){
+			System.out.println(e);
+		
 		}
-		catch(IOException ex){
+	}
+	public static void print(){
+		 for(Byte b :sounds){
+		//for(int i = 0; i < 10; ++i){
+			System.out.printf("%02X",b);
+			System.out.println("\n");
 
-			System.out.println("Error has occured: IO exception has been thrown");
 		}
+
+	}
+
+
+	public static void Encrypt(){
+
+	}
+
+
+	public static void Decrypt(){
+
 	}
 
 
 
 
-
-
     public static void main(String[] args) {
-        System.out.println("Test Project");
+    	SoundEncrypt x = new SoundEncrypt("Short.wav");
+    	print();		
     }
 }
 
@@ -49,4 +68,11 @@ http://stackoverflow.com/questions/7146382/how-can-i-read-a-wav-file-and-replace
 https://docs.oracle.com/javase/7/docs/api/java/io/RandomAccessFile.html
 
 http://stackoverflow.com/questions/858980/file-to-byte-in-java
+
+
+USED FOR SURE:
+
+http://www.codeproject.com/Articles/6960/Steganography-VIII-Hiding-Data-in-Wave-Audio-Files
+
+
 */
