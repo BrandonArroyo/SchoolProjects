@@ -26,12 +26,18 @@ public class SoundEncrypt {
 		
 		}
 	}
-	public static void print(){
-		 for(Byte b :sounds){
-		//for(int i = 0; i < 10; ++i){
-			System.out.printf("%02X",b);
-			System.out.println("\n");
 
+	public static void print(){
+		// This function will then write it back out 
+		try{
+		byte dataToWrite[] = sounds;
+		FileOutputStream out = new FileOutputStream("This");
+		out.write(dataToWrite);
+		out.close();
+		}
+		catch(Exception e){
+			System.out.println(e);
+		
 		}
 
 	}
