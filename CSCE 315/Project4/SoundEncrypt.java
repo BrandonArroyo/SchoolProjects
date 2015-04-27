@@ -67,26 +67,29 @@ public class SoundEncrypt {
 			int x = (int)message.charAt(i);
 			String s = Integer.toBinaryString(x);
 			System.out.println(s);
-			System.out.println("HERE:" + s.length());
+			
 			for(int k = 0; k < s.length(); ++k){
+				
 				if(s.charAt(k) == '0') {
 					if(sounds[j] % 2 != 0){// will have check to see if this actually works
 						sounds[j] +=1;
-						System.out.println("this 1: "+sounds[j]);
+						System.out.println(sounds[j]);
 					}
-					System.out.println("This 2: "+sounds[j]);
+					else System.out.println(sounds[j]);
 				}
 				else{
 					if(sounds[j] % 2 == 0) {// will have check to see if this actually works
 						sounds[j] +=1;
 						System.out.println(sounds[j]);
 					}
+					else
 						System.out.println(sounds[j]);
 
 				}
+				++j;
 			}
 			++i;
-			++j;
+			
 		}
 	}
 
@@ -100,7 +103,7 @@ public class SoundEncrypt {
 
     public static void main(String[] args) {
     	SoundEncrypt x = new SoundEncrypt("Short.wav");
-    	Encrypt("HELLO");
+    	Encrypt("B");
     	print();		
     }
 }
