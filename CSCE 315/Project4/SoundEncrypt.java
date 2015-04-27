@@ -28,12 +28,14 @@ public class SoundEncrypt {
 	}
 
 	public static void print(){
-		// This function will then write it back out 
+		//  This will create the encrypted file 
 		try{
 		byte dataToWrite[] = sounds;
-		FileOutputStream out = new FileOutputStream("This");
+		FileOutputStream out = new FileOutputStream("This.wav");
 		out.write(dataToWrite);
 		out.close();
+		System.out.println("Completed encryption");
+		System.out.println(sounds[50]);
 		}
 		catch(Exception e){
 			System.out.println(e);
@@ -42,9 +44,50 @@ public class SoundEncrypt {
 
 	}
 
+	public static int language(){
+		return 5;
+	}
+	public static boolean evenOdd(){
 
-	public static void Encrypt(){
+		return true; 
+	}
+	public static void Encrypt(String message){
+		// the first 3 lines ainclude data that cant be overwritten
+		// this will be 48 bytes
+		// for(char x : message.toCharArray() ){
+			
+		// 	System.out.println();
+			
 
+		// }
+		int i = 0;
+		int j = 48; 
+		
+		while ( i < message.length() && ((j*8) + 48) < sounds.length ){ // each spot takes 8 bits
+			int x = (int)message.charAt(i);
+			String s = Integer.toBinaryString(x);
+			System.out.println(s);
+			System.out.println("HERE:" + s.length());
+			for(int k = 0; k < s.length(); ++k){
+				if(s.charAt(k) == '0') {
+					if(sounds[j] % 2 != 0){// will have check to see if this actually works
+						sounds[j] +=1;
+						System.out.println("this 1: "+sounds[j]);
+					}
+					System.out.println("This 2: "+sounds[j]);
+				}
+				else{
+					if(sounds[j] % 2 == 0) {// will have check to see if this actually works
+						sounds[j] +=1;
+						System.out.println(sounds[j]);
+					}
+						System.out.println(sounds[j]);
+
+				}
+			}
+			++i;
+			++j;
+		}
 	}
 
 
@@ -57,6 +100,7 @@ public class SoundEncrypt {
 
     public static void main(String[] args) {
     	SoundEncrypt x = new SoundEncrypt("Short.wav");
+    	Encrypt("HELLO");
     	print();		
     }
 }
