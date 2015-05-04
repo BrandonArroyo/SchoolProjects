@@ -1,3 +1,5 @@
+//package _Sound;
+
 import java.io.*;
 import java.util.*;
 // import java.io.File;
@@ -44,13 +46,7 @@ public class SoundEncrypt {
 
 	}
 
-	public static int language(){
-		return 5;
-	}
-	public static boolean evenOdd(){
 
-		return true; 
-	}
 	public static void Encrypt(String message){
 		// the first 3 lines ainclude data that cant be overwritten
 		// this will be 48 bytes
@@ -94,8 +90,36 @@ public class SoundEncrypt {
 	}
 
 
-	public static void Decrypt(){
+	public static String Decrypt(String file_name, int message ){
+		//http://stackoverflow.com/questions/5453017/convert-binary-string-to-ascii-text
+		byte[] test ;
+		File wavFile = new File(file_name);
+		InputStream is = new FileInputStream(wavFile);
+		test = new byte[(int)wavFile.length()];
+		is.read(test,0,test.length);
+		is.close();
+		length = (int)wavFile.length();
+		String Hidden;
+		for(int i = 48 ; i < (message*8); ++i){
 
+			if(test[i] % 2 = 0 ){
+				hidden += "0"
+			}
+			else{
+				hidden += "1";
+			}
+
+		}
+		String s2 = "";
+		char nextChar;
+
+		for(int i = 0; i <= s.length()-8; i += 8) //this is a little tricky.  we want [0, 7], [9, 16], etc
+		{
+			nextChar = (char)Integer.parseInt(s.substring(i, i+8), 2);
+			s2 += nextChar;
+		}
+
+		return s2;
 	}
 
 
