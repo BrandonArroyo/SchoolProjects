@@ -78,6 +78,7 @@ public:
   int cwrite(string _msg);
   /* Write the data to the channel. The function returns the number of
      characters written to the channel. */
+  int read_fd();
 };
 
 
